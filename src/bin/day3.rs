@@ -140,7 +140,6 @@ fn part2(lines: Lines<'_>) -> u64 {
             } else {
                 if !s.is_empty() {
                     if gear_of.is_some() {
-                        //gears.insert(gear_of.clone().unwrap(), s.parse::<u64>());
                         gears
                             .entry(gear_of.clone().unwrap())
                             .or_insert(Vec::new())
