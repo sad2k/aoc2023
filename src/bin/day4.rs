@@ -50,8 +50,7 @@ fn part2(lines: Lines<'_>) -> u64 {
             .collect();
         cards.push((have_winning.len(), 1));
     }
-    println!("{:?}", cards);
-    for i in 0..cards.len() {
+    for i in 0..cards.len() ß{
         let (won, num) = cards[i];
         for j in 1..=won {
             cards[i+j].1 += num;
