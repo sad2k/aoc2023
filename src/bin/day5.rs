@@ -113,8 +113,8 @@ fn main() {
     let contents = fs::read_to_string("inputs/day5.txt").unwrap();
 
     // part 1
-    // println!("{}", part1(&contents));
+    println!("{}", part1(&contents));
 
     // part 2
-    println!("{}", part2(&contents));
+    // println!("{}", part2(&contents));
 }
