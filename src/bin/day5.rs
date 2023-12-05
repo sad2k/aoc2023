@@ -10,12 +10,25 @@ fn resolve_rule(src: u64, rules: &Vec<Vec<u64>>) -> u64 {
     if src < rules[0][1] || src >= (rules[rules.len()-1][1] + rules[rules.len()-1][2]) {
         return src;
     }
-    for rule in rules {
-        if src >= rule[1] && src < (rule[1] + rule[2]) {
-            return rule[0] + src - rule[1];
+    // for rule in rules {
+        // if src >= rule[1] && src < (rule[1] + rule[2]) {
+            // return rule[0] + src - rule[1];
+        // }
+    // }
+    match rules.binary_search_by_key(&src, |x| x[1]) {
+        Ok(n) => rules[n][0],
+        Err(n) => if n == 0 {
+            // shouldn't happen
+            src
+        } else {
+            let rule = &rules[n-1];
+            if src >= rule[1] && src < (rule[1] + rule[2]) {
+                rule[0] + src - rule[1]
+            } else {
+                src
+            }
         }
     }
-    src
 }
 
 fn resolve_seed(seed: u64, rules: &Vec<Vec<Vec<u64>>>) -> u64 {
@@ -100,7 +113,7 @@ fn part2(s: &str) -> u64 {
                 res = l;
             }
             cnt += 1;
-            if cnt % 1000000 == 0 {
+            if cnt % 10000000 == 0 {
                 println!("{}", cnt);
             }
         }
@@ -113,8 +126,8 @@ fn main() {
     let contents = fs::read_to_string("inputs/day5.txt").unwrap();
 
     // part 1
-    println!("{}", part1(&contents));
+    // println!("{}", part1(&contents));
 
     // part 2
-    // println!("{}", part2(&contents));
+    println!("{}", part2(&contents));
 }
