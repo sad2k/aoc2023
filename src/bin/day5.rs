@@ -37,14 +37,19 @@ fn resolve_seed(seed: u64, rules: &HashMap<(String, String), Vec<Vec<u64>>>) -> 
     res
 }
 
-fn part1(s: &str) -> u64 {
+struct Parsed {
+    seeds: Vec<u64>,
+    rules: HashMap<(String, String), Vec<Vec<u64>>>
+}
+
+fn parse(s: &str) -> Parsed {
     let blocks: Vec<_> = s.split("\n\n").collect();
     let seeds = blocks[0].split(": ").collect::<Vec<_>>()[1];
     let seeds = seeds
         .split(" ")
         .map(|x| x.parse::<u64>().unwrap())
         .collect::<Vec<_>>();
-    let mut rules = HashMap::new();
+    let mut rules: HashMap<(String, String), Vec<Vec<u64>>> = HashMap::new();
     for i in 1..blocks.len() {
         let block_lines = blocks[i].lines().collect::<Vec<_>>();
         let header = block_lines[0].split(" ").next().unwrap();
@@ -58,7 +63,14 @@ fn part1(s: &str) -> u64 {
                 .collect::<Vec<_>>(),
         );
     }
-    seeds.iter().map(|x| resolve_seed(*x, &rules)).min().unwrap()
+    Parsed {
+        seeds, rules
+    }
+}
+
+fn part1(s: &str) -> u64 {
+    let p = parse(s);
+    p.seeds.iter().map(|x| resolve_seed(*x, &p.rules)).min().unwrap()
 }
 
 fn main() {
