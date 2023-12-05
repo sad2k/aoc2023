@@ -7,6 +7,9 @@ fn parse_nums(s: &str) -> Vec<u64> {
 }
 
 fn resolve_rule(src: u64, rules: &Vec<Vec<u64>>) -> u64 {
+    if src < rules[0][1] || src >= (rules[rules.len()-1][1] + rules[rules.len()-1][2]) {
+        return src;
+    }
     for rule in rules {
         if src >= rule[1] && src < (rule[1] + rule[2]) {
             return rule[0] + src - rule[1];
@@ -63,8 +66,9 @@ fn parse(s: &str) -> Parsed {
     let mut rules_vec: Vec<Vec<Vec<u64>>> = Vec::new();
     for i in 1..rule_order.len() {
         let key = (rule_order[i - 1].clone(), rule_order[i].clone());
-        let key_rules = &rules[&key];
-        rules_vec.push(key_rules.clone());
+        let mut key_rules = (&rules[&key]).clone();
+        key_rules.sort_by_key(|x| x[1]);
+        rules_vec.push(key_rules);
     }
     Parsed {
         seeds,
