@@ -15,31 +15,18 @@ fn resolve_rule(src: u64, rules: &Vec<Vec<u64>>) -> u64 {
     src
 }
 
-fn resolve_seed(seed: u64, rules: &HashMap<(String, String), Vec<Vec<u64>>>) -> u64 {
-    let rule_order = vec![
-        String::from("seed"),
-        String::from("soil"),
-        String::from("fertilizer"),
-        String::from("water"),
-        String::from("light"),
-        String::from("temperature"),
-        String::from("humidity"),
-        String::from("location"),
-    ];
-
+fn resolve_seed(seed: u64, rules: &Vec<Vec<Vec<u64>>>) -> u64 {
     let mut res = seed;
 
-    for i in 1..rule_order.len() {
-        let key = (rule_order[i-1].clone(), rule_order[i].clone());
-        let key_rules = &rules[&key];
-        res = resolve_rule(res, key_rules);
+    for rule in rules {
+        res = resolve_rule(res, rule);
     }
     res
 }
 
 struct Parsed {
     seeds: Vec<u64>,
-    rules: HashMap<(String, String), Vec<Vec<u64>>>
+    rules: Vec<Vec<Vec<u64>>>,
 }
 
 fn parse(s: &str) -> Parsed {
@@ -63,19 +50,67 @@ fn parse(s: &str) -> Parsed {
                 .collect::<Vec<_>>(),
         );
     }
+    let rule_order = vec![
+        String::from("seed"),
+        String::from("soil"),
+        String::from("fertilizer"),
+        String::from("water"),
+        String::from("light"),
+        String::from("temperature"),
+        String::from("humidity"),
+        String::from("location"),
+    ];
+    let mut rules_vec: Vec<Vec<Vec<u64>>> = Vec::new();
+    for i in 1..rule_order.len() {
+        let key = (rule_order[i - 1].clone(), rule_order[i].clone());
+        let key_rules = &rules[&key];
+        rules_vec.push(key_rules.clone());
+    }
     Parsed {
-        seeds, rules
+        seeds,
+        rules: rules_vec,
     }
 }
 
 fn part1(s: &str) -> u64 {
     let p = parse(s);
-    p.seeds.iter().map(|x| resolve_seed(*x, &p.rules)).min().unwrap()
+    p.seeds
+        .iter()
+        .map(|x| resolve_seed(*x, &p.rules))
+        .min()
+        .unwrap()
+}
+
+fn part2(s: &str) -> u64 {
+    let p = parse(s);
+    let seeds = p.seeds;
+    let mut res = u64::MAX;
+    for i in (0..(seeds.len())).step_by(2) {
+        let start = seeds[i];
+        let sz = seeds[i + 1];
+        println!("calculating {} {}", start, sz);
+        let mut cnt = 0;
+        for j in start..(start + sz) {
+            let l = resolve_seed(j, &p.rules);
+            if l < res {
+                res = l;
+            }
+            cnt += 1;
+            if cnt % 1000000 == 0 {
+                println!("{}", cnt);
+            }
+        }
+    }
+    res
+    // p.seeds.iter().map(|x| resolve_seed(*x, &p.rules)).min().unwrap()
 }
 
 fn main() {
     let contents = fs::read_to_string("inputs/day5.txt").unwrap();
 
     // part 1
-    println!("{}", part1(&contents));
+    // println!("{}", part1(&contents));
+
+    // part 2
+    println!("{}", part2(&contents));
 }
