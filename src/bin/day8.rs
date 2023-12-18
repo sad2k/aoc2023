@@ -1,9 +1,6 @@
 use std::{fs, collections::HashMap};
 
-
-
 fn part1(rules_chars: &Vec<char>, graph: &HashMap<String, (String, String)>) -> u64 {
-
     let aaa = String::from("AAA");
     let zzz = String::from("ZZZ");
     let mut cur = &aaa;
