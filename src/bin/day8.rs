@@ -27,7 +27,31 @@ fn part1(rules_chars: &Vec<char>, graph: &HashMap<String, (String, String)>) -> 
     iter
 }
 
-
+fn part2(rules_chars: &Vec<char>, graph: &HashMap<String, (String, String)>, start: &String) -> u64 {
+    let mut cur = start;
+    let mut idx = 0;
+    let mut iter = 0;
+    loop {
+        // println!("{}", cur);
+        let cur_chars = cur.chars().collect::<Vec<_>>();
+        if cur_chars[cur_chars.len()-1] == 'Z' {
+            break;
+        }
+        if idx == rules_chars.len() {
+            idx = 0;
+        }
+        let rule = rules_chars[idx];
+        let next = match rule {
+            'L' => &graph[cur].0,
+            'R' => &graph[cur].1,
+            _ => panic!("bad rule {rule}") 
+        };
+        cur = next;
+        iter += 1;
+        idx += 1;
+    }
+    iter
+}
 
 fn main() {
     let content = fs::read_to_string("inputs/day8.txt").unwrap();
@@ -48,9 +72,11 @@ fn main() {
     }
 
     // part 1
-    println!("{}", part1(&rules_chars, &graph));
+    // println!("{}", part1(&rules_chars, &graph));
 
     // part 2
-    // println!("{}", part2(&lines));
-
+    let starts = graph.keys().filter(|x| {let c = x.chars().collect::<Vec<_>>(); c[c.len()-1] == 'A'}).collect::<Vec<_>>();
+    for start in starts {
+        println!("{:?} -> {}", start, part2(&rules_chars, &graph, start));
+    }
 }
