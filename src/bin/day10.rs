@@ -217,6 +217,8 @@ fn main() {
         .map(|x| x.chars().collect::<Vec<_>>())
         .collect::<Vec<_>>();
     let (map, start) = parse(&lines);
+
+    // part 1
     let farthest = find_length(&map, start) / 2;
     println!("{farthest}");
 }
