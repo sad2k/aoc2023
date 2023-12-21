@@ -218,11 +218,13 @@ fn parse(
     (map, start.unwrap())
 }
 
-fn find_length(map: &HashMap<(usize, usize), Vec<(usize, usize)>>, start: (usize, usize)) -> u64 {
+fn find_length(map: &HashMap<(usize, usize), Vec<(usize, usize)>>, start: (usize, usize), mut path: &mut Vec<(usize, usize)>) -> u64 {
     let mut res = 1;
     let mut prev = start;
     let mut cur = map[&prev][0];
+    path.push(prev);
     while cur != start {
+        path.push(cur);
         let connections = &map[&cur];
         if connections.len() != 2 {
             panic!("bad connections for coord {:?}: {:?}", cur, connections);
@@ -239,6 +241,27 @@ fn find_length(map: &HashMap<(usize, usize), Vec<(usize, usize)>>, start: (usize
     res
 }
 
+fn part2(lines: &Vec<Vec<char>>, path: &Vec<(usize, usize)>) -> u64 {
+    let mut res = 0;
+    for i in 0..lines.len() {
+        let row = &lines[i];
+        let mut inside = false;
+        for j in 0..row.len() {
+            let ch = row[j];
+            if (path.contains(&(i, j))) {
+                if ch == '|' || ch == 'F' || ch == '7' {
+                    inside = !inside;
+                }
+            } else {
+                if (inside) {
+                    res += 1;
+                }
+            }
+        }
+    }
+    res
+}
+
 fn main() {
     let content = fs::read_to_string("inputs/day10.txt").unwrap();
     let mut lines = content
@@ -246,11 +269,12 @@ fn main() {
         .map(|x| x.chars().collect::<Vec<_>>())
         .collect::<Vec<_>>();
     let (map, start) = parse(&mut lines);
-    println!("{:?}", lines);
 
-    // part 1
-    let farthest = find_length(&map, start) / 2;
+    // part 
+    let mut path = Vec::new();
+    let farthest = find_length(&map, start, &mut path) / 2;
     println!("{farthest}");
 
     // part 2
+    println!("{}", part2(&lines, &path));
 }
