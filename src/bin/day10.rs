@@ -270,7 +270,7 @@ fn main() {
         .collect::<Vec<_>>();
     let (map, start) = parse(&mut lines);
 
-    // part 
+    // part 1
     let mut path = Vec::new();
     let farthest = find_length(&map, start, &mut path) / 2;
     println!("{farthest}");
