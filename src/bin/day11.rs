@@ -65,4 +65,8 @@ fn main() {
     // part 1
     let coords = get_coords(&lines, 1);
     println!("{}", part1(&coords));
+
+    // part 2
+    let coords = get_coords(&lines, 1000000-1);
+    println!("{}", part1(&coords));
 }
