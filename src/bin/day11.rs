@@ -9,7 +9,7 @@ fn is_empty_col(lines: &Vec<Vec<char>>, col: usize) -> bool {
     true
 }
 
-fn get_coords(lines: &Vec<Vec<char>>) -> Vec<(i64, i64)> {
+fn get_coords(lines: &Vec<Vec<char>>, expansion_coeff: i64) -> Vec<(i64, i64)> {
     let col_num = lines[0].len();
     let mut empty_cols = HashSet::new();
     for i in 0..col_num {
@@ -23,12 +23,12 @@ fn get_coords(lines: &Vec<Vec<char>>) -> Vec<(i64, i64)> {
     for i in 0..lines.len() {
         let row = &lines[i];
         if row.iter().all(|x| *x == '.') {
-            row_idx += 1;
+            row_idx += expansion_coeff;
         } else {
             let mut col_idx: i64 = 0;
             for j in 0..row.len() {
                 if empty_cols.contains(&j) {
-                    col_idx += 1;
+                    col_idx += expansion_coeff;
                 } else {
                     if row[j] == '#' {
                         coords.push((row_idx, col_idx));
@@ -63,6 +63,6 @@ fn main() {
         .collect::<Vec<_>>();
 
     // part 1
-    let coords = get_coords(&lines);
+    let coords = get_coords(&lines, 1);
     println!("{}", part1(&coords));
 }
