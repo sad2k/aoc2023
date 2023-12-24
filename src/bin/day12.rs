@@ -1,4 +1,4 @@
-use std::{collections::HashMap, fs};
+use std::{collections::HashMap, fs, str::Lines};
 
 struct Solution {
     pattern: Vec<char>,
@@ -113,14 +113,20 @@ impl Solution {
     }
 }
 
-fn main() {
-    let content = fs::read_to_string("inputs/day12.txt").unwrap();
-    let parsed = content.lines();
+fn part1(lines: &Vec<&str>) {
     let mut sum = 0;
-    for line in parsed {
+    for line in lines {
         let mut sol = Solution::new(line);
         let sol_res = sol.solve();
         sum += sol_res;
     }
     println!("{}", sum);
+}
+
+fn main() {
+    let content = fs::read_to_string("inputs/day12.txt").unwrap();
+    let parsed = content.lines().collect::<Vec<_>>();
+
+    // part 1
+    part1(&parsed);
 }
