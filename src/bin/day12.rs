@@ -7,7 +7,7 @@ struct Solution {
 }
 
 impl Solution {
-    fn new(s: &str) -> Solution {
+    fn new(s: &str, multiplier: usize) -> Solution {
         let mut spl = s.split(" ");
         let pattern = spl.next().unwrap();
         let rules = spl
@@ -16,9 +16,29 @@ impl Solution {
             .split(",")
             .map(|x| x.parse::<u64>().unwrap())
             .collect::<Vec<_>>();
+        let pattern_chars = pattern.chars().collect::<Vec<_>>();
         Solution {
-            pattern: pattern.chars().collect::<Vec<_>>(),
-            rules: rules,
+            pattern: if multiplier > 1 {
+                let mut vec = Vec::new();
+                for i in 0..multiplier {
+                    if i > 0 {
+                        vec.push('?');
+                    }
+                    vec.extend(&pattern_chars);
+                }
+                vec
+            } else {
+                pattern_chars
+            },
+            rules: if multiplier > 1 {
+                let mut vec = Vec::new();
+                for i in 0..multiplier {
+                    vec.extend(&rules);
+                }
+                vec
+            } else {
+                rules
+            },
             cache: HashMap::new(),
         }
     }
@@ -116,7 +136,17 @@ impl Solution {
 fn part1(lines: &Vec<&str>) {
     let mut sum = 0;
     for line in lines {
-        let mut sol = Solution::new(line);
+        let mut sol = Solution::new(line, 1);
+        let sol_res = sol.solve();
+        sum += sol_res;
+    }
+    println!("{}", sum);
+}
+
+fn part2(lines: &Vec<&str>) {
+    let mut sum = 0;
+    for line in lines {
+        let mut sol = Solution::new(line, 5);
         let sol_res = sol.solve();
         sum += sol_res;
     }
@@ -128,5 +158,8 @@ fn main() {
     let parsed = content.lines().collect::<Vec<_>>();
 
     // part 1
-    part1(&parsed);
+    // part1(&parsed);
+
+    // part 2
+    part2(&parsed);
 }
