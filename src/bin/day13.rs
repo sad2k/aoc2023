@@ -51,14 +51,77 @@ fn solve(pattern: &Vec<String>) -> u64 {
         .iter()
         .map(|x| u64::from_str_radix(&x, 2).unwrap())
         .collect::<Vec<_>>();
-
-    return solve0(&vert_nums).unwrap() as u64;
+    return solve0(&vert_nums).unwrap_or(0) as u64;
 }
 
 fn part1(lines: &Vec<Vec<String>>) -> u64 {
     let mut res = 0;
     for pattern in lines {
         res += solve(pattern);
+    }
+    res
+}
+
+fn solve0_with_smudges(v: &Vec<u64>, bits: usize) -> Option<usize> {
+    let mut vv = v.clone();
+    for i in 0..vv.len() {
+        let orig = vv[i];
+        for j in 0..bits {
+            let modif = orig ^ (1 << j);
+            vv[i] = modif;
+            let res = solve0(&vv);
+            if res.is_some() {
+                // println!("{} {}", i, j);
+                return res;
+            }
+        }
+        vv[i] = orig;
+    }
+    None
+}
+
+fn solve2(pattern: &Vec<String>) -> u64 {
+    // horizontal
+    let binary = pattern
+        .iter()
+        .map(|x| x.replace("#", "1").replace(".", "0"))
+        .collect::<Vec<_>>();
+    let horiz = binary
+        .iter()
+        .map(|x| u64::from_str_radix(&x, 2).unwrap())
+        .collect::<Vec<_>>();
+    let best_horiz = solve0_with_smudges(&horiz, binary[0].len());
+    if best_horiz.is_some() {
+        return (best_horiz.unwrap() * 100) as u64;
+    }
+
+    // vertical
+    let mut vert: Vec<String> = Vec::new();
+    let binary_chars = binary
+        .iter()
+        .map(|x| x.chars().collect::<Vec<_>>())
+        .collect::<Vec<_>>();
+    for i in 0..binary_chars[0].len() {
+        let mut s = String::new();
+        for j in 0..binary_chars.len() {
+            s.push(binary_chars[j][i]);
+        }
+        vert.push(s);
+    }
+    let vert_nums = vert
+        .iter()
+        .map(|x| u64::from_str_radix(&x, 2).unwrap())
+        .collect::<Vec<_>>();
+
+    return solve0_with_smudges(&vert_nums, binary_chars[0].len()).unwrap_or(0) as u64;
+}
+
+fn part2(lines: &Vec<Vec<String>>) -> u64 {
+    let mut res = 0;
+    for pattern in lines {
+        let r = solve2(pattern);
+        // println!("{}", r);
+        res += r;
     }
     res
 }
@@ -73,4 +136,7 @@ fn main() {
 
     // part 1
     println!("{}", part1(&groups));
+
+    // part 2
+    println!("{}", part2(&groups));
 }
