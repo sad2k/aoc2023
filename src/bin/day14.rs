@@ -9,18 +9,23 @@ fn load(v: &Vec<Vec<char>>) -> u64 {
     res
 }
 
-fn part1(v: &Vec<Vec<char>>) -> u64 {
-    let mut vv = v.clone();
-    for col in 0..vv[0].len() {
+fn tilt_vertical(mut v: &mut Vec<Vec<char>>, towards_beginning: bool) -> () {
+    for col in 0..v[0].len() {
         let mut free: Option<usize> = None;
-        for row in 0..vv.len() {
-            let ch = vv[row][col];
+        let rng = if towards_beginning {
+            (0..v.len()).collect::<Vec<_>>()
+        } else {
+            (0..v.len()).rev().collect::<Vec<_>>()
+        };
+        let delta = if towards_beginning { 1 } else { -1 };
+        for row in rng {
+            let ch = v[row][col];
             match ch {
                 'O' => {
                     if free.is_some() {
-                        vv[free.unwrap()][col] = 'O';
-                        vv[row][col] = '.';
-                        free = Some(free.unwrap() + 1);
+                        v[free.unwrap()][col] = 'O';
+                        v[row][col] = '.';
+                        free = Some((free.unwrap() as i32 + delta) as usize);
                     }
                 }
                 '.' => {
@@ -33,7 +38,18 @@ fn part1(v: &Vec<Vec<char>>) -> u64 {
             }
         }
     }
+}
+
+fn part1(v: &Vec<Vec<char>>) -> u64 {
+    let mut vv = v.clone();
+    tilt_vertical(&mut vv, true);
     load(&vv)
+}
+
+fn print(v: &Vec<Vec<char>>) { 
+    for i in 0..v.len() {
+        println!("{:?}", v[i].iter().collect::<String>());
+    }
 }
 
 fn main() {
@@ -45,4 +61,9 @@ fn main() {
 
     // part 1
     println!("{}", part1(&lines));
+
+    // part 2
+    let mut t = lines.clone();
+    tilt_vertical(&mut t, false);
+    print(&t);
 }
