@@ -42,5 +42,7 @@ fn main() {
         .lines()
         .map(|x| x.chars().collect::<Vec<_>>())
         .collect::<Vec<_>>();
+
+    // part 1
     println!("{}", part1(&lines));
 }
