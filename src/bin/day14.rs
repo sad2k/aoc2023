@@ -80,22 +80,33 @@ fn tilt_cycle(mut v: &mut Vec<Vec<char>>) {
 
 fn part2(v: &Vec<Vec<char>>) -> u64 {
     let mut vv = v.clone();
-    let mut cache: HashMap<Vec<Vec<char>>, Vec<Vec<char>>> = HashMap::new();
-    for i in 0..1000000000 {
-        if i % 100000 == 0 {
-            println!("{}", i);
-        }
+    let mut cache: HashMap<Vec<Vec<char>>, (i32, Vec<Vec<char>>)> = HashMap::new();
+    let mut cache2: HashMap<i32, Vec<Vec<char>>> = HashMap::new();
+    let mut orig: i32 = 0;
+    let mut i = 0;
+    let mut cycle_start: Option<i32> = None;
+    let mut cycle_length: i32;
+
+    loop {
         if cache.contains_key(&vv) {
-            // println!("{} cache hit", i);
-            vv = cache.get(&vv).unwrap().clone();
+            (orig, vv) = cache.get(&vv).unwrap().clone();
+            if cycle_start.is_none() {
+                cycle_start = Some(i);
+                cycle_length = i-orig;
+                break;
+            } 
         } else {
-            println!("{} cache miss", i);
             let key = vv.clone();
             tilt_cycle(&mut vv);
-            cache.insert(key, vv.clone());
+            cache.insert(key, (i, vv.clone()));
+            cache2.insert(i, vv.clone());
         }
+        i += 1;
     }
-    load(&vv)
+    let actual_cycle_start = cycle_start.unwrap() - cycle_length;
+    let real = ((1000000000 -1 - actual_cycle_start) % cycle_length) + actual_cycle_start;
+    let cached = &cache2[&real];
+    load(&cached)
 }
 
 fn part1(v: &Vec<Vec<char>>) -> u64 {
