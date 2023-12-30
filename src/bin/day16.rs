@@ -19,8 +19,8 @@ fn move_in_direction(row: i32, col: i32, direction: Direction) -> (i32, i32) {
     }
 }
 
-fn part1(map: &Vec<Vec<char>>) -> u64 {
-    let mut beams: VecDeque<(i32, i32, Direction)> = VecDeque::from([(0, 0, Direction::Right)]);
+fn part1(map: &Vec<Vec<char>>, row: i32, col: i32, dir: Direction) -> u64 {
+    let mut beams: VecDeque<(i32, i32, Direction)> = VecDeque::from([(row, col, dir)]);
     let num_rows = map.len() as i32;
     let num_cols = map[0].len() as i32;
     let mut all_beams: HashSet<(i32, i32, Direction)> = HashSet::new();
@@ -110,6 +110,19 @@ fn part1(map: &Vec<Vec<char>>) -> u64 {
     energized.len() as u64
 }
 
+fn part2(map: &Vec<Vec<char>>) -> u64 {
+    let mut res = 0;
+    for row in 0..map.len() {
+        res = res.max(part1(map, row as i32, 0, Direction::Right));
+        res = res.max(part1(map, row as i32, (map[0].len()-1) as i32, Direction::Left));
+    }
+    for col in 0..map[0].len() {
+        res = res.max(part1(map, 0, col as i32, Direction::Down));
+        res = res.max(part1(map, (map.len()-1) as i32, col as i32, Direction::Up));
+    }
+    res
+}
+
 fn main() {
     let content = fs::read_to_string("inputs/day16.txt").unwrap();
     let lines = content
@@ -118,5 +131,8 @@ fn main() {
         .collect::<Vec<_>>();
 
     // part 1
-    println!("{}", part1(&lines));
+    // println!("{}", part1(&lines, 0, 0, Direction::Right));
+
+    // part 2
+    println!("{}", part2(&lines));
 }
