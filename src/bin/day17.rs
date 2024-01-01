@@ -392,7 +392,7 @@ fn build_map_part2(weights: &Vec<Vec<u32>>) -> HashMap<Position, Vec<Edge>> {
                     }
                 }
 
-                if col > 0 {
+                if col >= 4 {
                     // can turn left
                     let weight_left = weights[row][col - 1];
                     for steps in 4..=10 {
@@ -411,7 +411,7 @@ fn build_map_part2(weights: &Vec<Vec<u32>>) -> HashMap<Position, Vec<Edge>> {
                     }
                 }
 
-                if col < num_cols - 1 {
+                if col < num_cols - 4 {
                     // can turn right
                     let weight_right = weights[row][col + 1];
                     for steps in 4..=10 {
@@ -458,7 +458,7 @@ fn build_map_part2(weights: &Vec<Vec<u32>>) -> HashMap<Position, Vec<Edge>> {
                     }
                 }
 
-                if col > 0 {
+                if col >= 4 {
                     // can turn left
                     let weight_left = weights[row][col - 1];
                     for steps in 4..=10 {
@@ -472,7 +472,7 @@ fn build_map_part2(weights: &Vec<Vec<u32>>) -> HashMap<Position, Vec<Edge>> {
                     }
                 }
 
-                if col < num_cols - 1 {
+                if col < num_cols - 4 {
                     // can turn right
                     let weight_right = weights[row][col + 1];
                     for steps in 4..=10 {
@@ -514,7 +514,7 @@ fn build_map_part2(weights: &Vec<Vec<u32>>) -> HashMap<Position, Vec<Edge>> {
                     }
                 }
 
-                if row > 0 {
+                if row >= 4 {
                     // can turn up
                     let weight_up = weights[row - 1][col];
                     for steps in 4..=10 {
@@ -533,7 +533,7 @@ fn build_map_part2(weights: &Vec<Vec<u32>>) -> HashMap<Position, Vec<Edge>> {
                     }
                 }
 
-                if row < num_rows - 1 {
+                if row < num_rows - 4 {
                     // can turn down
                     let weight_down = weights[row + 1][col];
                     for steps in 4..=10 {
@@ -580,7 +580,7 @@ fn build_map_part2(weights: &Vec<Vec<u32>>) -> HashMap<Position, Vec<Edge>> {
                     }
                 }
 
-                if row > 0 {
+                if row >= 4 {
                     // can turn up
                     let weight_up = weights[row - 1][col];
                     for steps in 4..=10 {
@@ -599,7 +599,7 @@ fn build_map_part2(weights: &Vec<Vec<u32>>) -> HashMap<Position, Vec<Edge>> {
                     }
                 }
 
-                if row < num_rows - 1 {
+                if row < num_rows - 4 {
                     // can turn down
                     let weight_down = weights[row + 1][col];
                     for steps in 4..=10 {
