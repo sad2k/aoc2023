@@ -46,7 +46,7 @@ impl Edge {
     }
 }
 
-fn build_map(weights: &Vec<Vec<u32>>) -> HashMap<Position, Vec<Edge>> {
+fn build_map_part1(weights: &Vec<Vec<u32>>) -> HashMap<Position, Vec<Edge>> {
     let mut edges: HashMap<Position, Vec<Edge>> = HashMap::new();
 
     // build the graph
@@ -367,7 +367,7 @@ fn main() {
                 .collect::<Vec<_>>()
         })
         .collect::<Vec<_>>();
-    let map = build_map(&weights);
+    let map = build_map_part1(&weights);
     println!(
         "{}",
         part1(&map, weights.len() as u32, weights[0].len() as u32)
