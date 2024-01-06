@@ -7,10 +7,6 @@ fn print(v: &Vec<Vec<char>>) {
 }
 
 fn part1(lines: &Vec<(&str, u32, &str)>) -> u64 {
-    // let mut map = Vec::new();
-    // for i in 0..num_rows {
-    // map.push((0..num_cols).map(|_| '.').collect::<Vec<_>>());
-    // }
     let mut coords = Vec::new();
     let mut row = 0;
     let mut col = 0;
