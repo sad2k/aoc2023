@@ -7,47 +7,13 @@ fn print(v: &Vec<Vec<char>>) {
 }
 
 fn part1(lines: &Vec<(&str, u32, &str)>) -> u64 {
-    // determine dimensions
-    // actually not needed anymore but can't be bothered to remove
-    let mut row: i32 = 0;
-    let mut col: i32 = 0;
-    let mut min_row = i32::MAX;
-    let mut min_col = i32::MAX;
-    let mut max_row = i32::MIN;
-    let mut max_col = i32::MIN;
-    for (dir, num, _) in lines {
-        match *dir {
-            "R" => {
-                col += *num as i32;
-            }
-            "L" => {
-                col -= *num as i32;
-            }
-            "U" => {
-                row -= *num as i32;
-            }
-            "D" => {
-                row += *num as i32;
-            }
-            _ => {
-                panic!("bad dir: {dir}")
-            }
-        }
-        min_row = min_row.min(row);
-        min_col = min_col.min(col);
-        max_row = max_row.max(row);
-        max_col = max_col.max(col);
-    }
-    // println!("{} {} {} {}", min_row, min_col, max_row, max_col);
-    let mut num_rows = max_row - min_row + 1;
-    let mut num_cols = max_col - min_col + 1;
     // let mut map = Vec::new();
     // for i in 0..num_rows {
     // map.push((0..num_cols).map(|_| '.').collect::<Vec<_>>());
     // }
     let mut coords = Vec::new();
-    row = -min_row;
-    col = -min_col;
+    let mut row = 0;
+    let mut col = 0;
     coords.push((col, row));
     for (dir, num, _) in lines {
         match *dir {
