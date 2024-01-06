@@ -64,5 +64,7 @@ fn main() {
             (dir, num, col)
         })
         .collect::<Vec<_>>();
+
+    // part 1
     println!("{}", part1(&lines));
 }
