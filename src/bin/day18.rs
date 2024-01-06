@@ -46,10 +46,8 @@ fn part1(lines: &Vec<(&str, u32, &str)>) -> u64 {
     // map.push((0..num_cols).map(|_| '.').collect::<Vec<_>>());
     // }
     let mut coords = Vec::new();
-    // print(&map);
     row = -min_row;
     col = -min_col;
-    // map[row as usize][col as usize] = '#';
     coords.push((col, row));
     for (dir, num, _) in lines {
         match *dir {
@@ -57,28 +55,24 @@ fn part1(lines: &Vec<(&str, u32, &str)>) -> u64 {
                 for i in 0..*num {
                     col += 1;
                     coords.push((col, row));
-                    // map[row as usize][col as usize] = '#';
                 }
             }
             "L" => {
                 for i in 0..*num {
                     col -= 1;
                     coords.push((col, row));
-                    // map[row as usize][col as usize] = '#';
                 }
             }
             "U" => {
                 for i in 0..*num {
                     row -= 1;
                     coords.push((col, row));
-                    // map[row as usize][col as usize] = '#';
                 }
             }
             "D" => {
                 for i in 0..*num {
                     row += 1;
                     coords.push((col, row));
-                    // map[row as usize][col as usize] = '#';
                 }
             }
             _ => {
@@ -86,7 +80,6 @@ fn part1(lines: &Vec<(&str, u32, &str)>) -> u64 {
             }
         }
     }
-    // println!("{:?}", coords);
     let det = coords
         .windows(2)
         .map(|c| {
