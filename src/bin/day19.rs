@@ -132,6 +132,12 @@ fn part1(workflows: &Vec<Workflow>, parts: &Vec<HashMap<String, u64>>) -> u64 {
     result
 }
 
+fn part2(workflows: &Vec<Workflow>) -> u64 {
+    let mut result = 0;
+    let mut workflows_map = workflows_as_map(&workflows);
+    result
+}
+
 fn main() {
     let content = fs::read_to_string("inputs/day19.txt").unwrap();
     let lines = content.lines().collect::<Vec<_>>();
@@ -152,5 +158,8 @@ fn main() {
         .collect::<Vec<_>>();
 
     // part 1
-    println!("{}", part1(&workflows, &parts));
+    // println!("{}", part1(&workflows, &parts));
+
+    // part 2
+    println!("{}", part2(&workflows));
 }
