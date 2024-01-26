@@ -132,10 +132,87 @@ fn part1(workflows: &Vec<Workflow>, parts: &Vec<HashMap<String, u64>>) -> u64 {
     result
 }
 
+fn count_state(state: &HashMap<String, (u64, u64)>) -> u64 {
+    let mut res = 1;
+    for k in vec!["x", "m", "a", "s"] {
+        let s = state[&String::from(k)];
+        res *= (s.1 - s.0 + 1);
+    }
+    res
+}
+
+fn do_part2(
+    state: HashMap<String, (u64, u64)>,
+    workflows_map: &HashMap<String, Workflow>,
+    workflow: &Workflow,
+    next_rule: usize,
+) -> u64 {
+    let rule = &workflow.rules[next_rule];
+    match rule {
+        Rule::DefaultRule { result } => match result {
+            Result::Accepted => {
+                count_state(&state)
+            }
+            Result::Rejected => 0,
+            Result::ToWorkflow { name } => {
+                let new_workflow = &workflows_map[name];
+                do_part2(state, workflows_map, new_workflow, 0)
+            }
+        },
+        Rule::CategoryRule {
+            category,
+            sign,
+            value,
+            result,
+        } => {
+            let mut new_pos_state = state.clone();
+            match sign {
+                '<' => new_pos_state.get_mut(category).unwrap().1 = value - 1,
+                '>' => new_pos_state.get_mut(category).unwrap().0 = value + 1,
+                _ => panic!("bad sign: {sign}"),
+            };
+            let mut res = 0;
+            match result {
+                Result::Accepted => {
+                    println!("accepted state: {:?}", new_pos_state);
+                    res += count_state(&new_pos_state);
+                }
+                Result::Rejected => {}
+                Result::ToWorkflow { name } => {
+                    res += do_part2(new_pos_state, workflows_map, &workflows_map[name], 0);
+                }
+            }
+
+            if next_rule < workflow.rules.len() - 1 {
+                // should always be the case?
+                let mut new_neg_state = state.clone();
+                match sign {
+                    '<' => new_neg_state.get_mut(category).unwrap().0 = *value,
+                    '>' => new_neg_state.get_mut(category).unwrap().1 = *value,
+                    _ => panic!("bad sign: {sign}"),
+                };
+                res += do_part2(new_neg_state, workflows_map, workflow, next_rule + 1)
+            }
+            res
+        }
+    }
+}
+
 fn part2(workflows: &Vec<Workflow>) -> u64 {
     let mut result = 0;
     let mut workflows_map = workflows_as_map(&workflows);
-    result
+    let state = HashMap::from([
+        (String::from("x"), (1, 4000)),
+        (String::from("m"), (1, 4000)),
+        (String::from("a"), (1, 4000)),
+        (String::from("s"), (1, 4000)),
+    ]);
+    do_part2(
+        state,
+        &workflows_map,
+        &workflows_map[&String::from("in")],
+        0,
+    )
 }
 
 fn main() {
