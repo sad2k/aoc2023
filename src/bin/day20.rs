@@ -1,4 +1,4 @@
-use std::collections::{VecDeque, HashSet};
+use std::collections::{HashSet, VecDeque};
 use std::fmt::Debug;
 use std::ops::Deref;
 use std::{collections::HashMap, fs};
@@ -127,17 +127,25 @@ fn parse(lines: &Vec<&str>) -> HashMap<String, ModuleDef> {
         } else {
             Box::new(NoOpModule {})
         };
-        map.insert(name_string.clone(), ModuleDef { module, outputs: module_outputs[&name_string].clone() });
+        map.insert(
+            name_string.clone(),
+            ModuleDef {
+                module,
+                outputs: module_outputs[&name_string].clone(),
+            },
+        );
     }
 
     // additional modules (output)
     for module in &all_modules {
         if !map.contains_key(module) {
-            map.insert(module.clone(), ModuleDef {
-                module: Box::new(NoOpModule {
-                }),
-                outputs: Vec::new()
-            });
+            map.insert(
+                module.clone(),
+                ModuleDef {
+                    module: Box::new(NoOpModule {}),
+                    outputs: Vec::new(),
+                },
+            );
         }
     }
 
@@ -176,11 +184,55 @@ fn part1(modules: &mut HashMap<String, ModuleDef>, count: usize) -> u64 {
     low_counts * high_counts
 }
 
+fn part2(modules: &mut HashMap<String, ModuleDef>) {
+    let mut buttons: u64 = 0;
+    let mut res = HashMap::new();
+    
+    loop {
+        buttons += 1;
+        let mut q = VecDeque::new();
+        q.push_back((
+            String::from("button"),
+            String::from("broadcaster"),
+            PulseType::LOW,
+        ));
+        while !q.is_empty() {
+            let (from, to, pulse) = q.pop_front().unwrap();
+            if (to == String::from("qt")
+                || to == String::from("qb")
+                || to == String::from("ng")
+                || to == String::from("mp"))
+                && pulse == PulseType::LOW
+            {
+                if !res.contains_key(&to) {
+                    res.insert(to.clone(), buttons);
+                }
+                if res.len() == 4 {
+                    println!("{:?}", res);
+                    return;
+                }
+            }
+            // println!("to {:?}", to);
+            let def = modules.get_mut(&to).unwrap();
+            let res = def.module.receive(pulse, from);
+            if let Some(output_pulse) = res {
+                for output in &def.outputs {
+                    q.push_back((to.clone(), output.clone(), output_pulse));
+                }
+            }
+        }
+    }
+}
+
 fn main() {
     let content = fs::read_to_string("inputs/day20.txt").unwrap();
     let lines = content.lines().collect::<Vec<_>>();
     let mut modules = parse(&lines);
 
     // part 1
-    println!("{}", part1(&mut modules, 1000));
+    // println!("{}", part1(&mut modules, 1000));
+
+    // part 2
+    modules = parse(&lines);
+    part2(&mut modules);
 }
