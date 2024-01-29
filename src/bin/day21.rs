@@ -13,7 +13,7 @@ struct Map {
 
 impl Map {
     fn is_rock(&self, row: i32, col: i32) -> bool {
-        self.rocks.contains(&(row, col))
+        self.rocks.contains(&(row.rem_euclid(self.num_rows), col.rem_euclid(self.num_cols)))
     }
 }
 
@@ -90,6 +90,7 @@ fn main() {
     let content = fs::read_to_string("inputs/day21.txt").unwrap();
     let lines = content.lines().collect::<Vec<_>>();
     let mut map = parse(&lines);
-    expand(&mut map);
-    println!("{:?}", part1(&map, 131));
+
+    // part 1
+    println!("{:?}", part1(&map, 64));
 }
