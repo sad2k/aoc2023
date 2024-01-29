@@ -11,6 +11,12 @@ struct Map {
     start: (i32, i32),
 }
 
+impl Map {
+    fn is_rock(&self, row: i32, col: i32) -> bool {
+        self.rocks.contains(&(row, col))
+    }
+}
+
 fn parse(lines: &Vec<&str>) -> Map {
     let num_rows = lines.len() as i32;
     let num_cols = lines[0].len() as i32;
@@ -45,7 +51,7 @@ fn neighbours(row: i32, col: i32, map: &Map) -> Vec<(i32, i32)> {
     res.push((row + 1, col));
     res.push((row, col - 1));
     res.push((row, col + 1));
-    res.retain(|x| !map.rocks.contains(x));
+    res.retain(|x| !map.is_rock(x.0, x.1));
     res
 }
 
