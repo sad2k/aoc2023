@@ -5,12 +5,16 @@ use std::{
 
 #[derive(Debug)]
 struct Map {
-    rocks: Vec<(i32, i32)>,
+    num_rows: i32,
+    num_cols: i32,
+    rocks: HashSet<(i32, i32)>,
     start: (i32, i32),
 }
 
 fn parse(lines: &Vec<&str>) -> Map {
-    let mut rocks = Vec::new();
+    let num_rows = lines.len() as i32;
+    let num_cols = lines[0].len() as i32;
+    let mut rocks = HashSet::new();
     let mut start = (0, 0);
     for row in 0..lines.len() {
         let line = lines[row].chars().collect::<Vec<_>>();
@@ -18,7 +22,7 @@ fn parse(lines: &Vec<&str>) -> Map {
             let ch = line[col];
             match ch {
                 '#' => {
-                    rocks.push((row as i32, col as i32));
+                    rocks.insert((row as i32, col as i32));
                 }
                 'S' => {
                     start = (row as i32, col as i32);
@@ -27,7 +31,12 @@ fn parse(lines: &Vec<&str>) -> Map {
             }
         }
     }
-    Map { rocks, start }
+    Map {
+        rocks,
+        start,
+        num_rows,
+        num_cols,
+    }
 }
 
 fn neighbours(row: i32, col: i32, map: &Map) -> Vec<(i32, i32)> {
@@ -59,9 +68,22 @@ fn part1(map: &Map, steps: u32) -> u32 {
     level_pos.len() as u32
 }
 
+fn expand(map: &mut Map) {
+    let base_rocks = map.rocks.clone();
+    for row_mult in -10..=10 {
+        for col_mult in -10..=10 {
+            for (row, col) in &base_rocks {
+                map.rocks
+                    .insert((row + map.num_rows * row_mult, col + map.num_cols * col_mult));
+            }
+        }
+    }
+}
+
 fn main() {
     let content = fs::read_to_string("inputs/day21.txt").unwrap();
     let lines = content.lines().collect::<Vec<_>>();
-    let map = parse(&lines);
-    println!("{:?}", part1(&map, 64));
+    let mut map = parse(&lines);
+    expand(&mut map);
+    println!("{:?}", part1(&map, 131));
 }
