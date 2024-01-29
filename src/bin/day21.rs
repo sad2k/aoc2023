@@ -92,5 +92,14 @@ fn main() {
     let mut map = parse(&lines);
 
     // part 1
-    println!("{:?}", part1(&map, 64));
+    // println!("{:?}", part1(&map, 64));
+
+    // part 2
+    // https://topaz.github.io/paste/#XQAAAQBCBgAAAAAAAAAzHIoib6pXbueH4X9F244lVRDcOZab5q1+VXn364pOX+QC8T+QV8WY66I0rlmXGVk2qledecBa8UqLTfbupnkeF9qCUXHb55rmt4QwFIG3YQhCWUwDqXpC8tvUoRjqgPvhJY6rhOsjUOhRSfFlVFhYRnT4WYnecvD2lfJgnZJKR5FAo/F4wQ+TKFaDphxVWfQmPq2wMsAoskpBFj3EWnInG/f7ID7m4hLLxZU3ACvsA6x3Npt/H2e6HWwtdxtaha9pDzEe58JFhW84zvJqrhsPIzcQiyIwuDIgOlXFk9BALecsEP2u0uzEFKqf7yPqg2g7b96VkEtN/u/naFCmrjE+Jils6jO1pPLesFAknj2QRzNTiWRTDsPtokWj+3vlscYiyO8Gp2iMBgxtSoC8WcRGmqb0duuxIW3ge1o+W2pOv/zX12apI8fMc/W99XewLzd0GcBHqw79FCaphY6v7hJPMmRgwwLvzEzP9QY5o/6JUJ3KK2JaplhCxqzjDQnL7sFYcFXloztlP0zvJyIELBQfpzpFWyehtN1lasLy5/M8bRUjvQIkjh7BL0KLvTgeD5va5owh4ArKiAi8e6u5ClXVukVLQ60Z4CJpjzfznnaSTaJ8Oc8WOIYIFIQ4L2VNdafXUTsWOLZrm1X/w9AW7qBySq6XOEqjZkHUyZWpee4mqmoZkAzSebK426Dbl2rCFFK0e+Bmjc3uUNUWOzb6RZL3vInt95DFqMjqeVD5vgblAOEQSI/y7QcOzvG9HKl3XfJnFn6ovCiArotKJI7PbuSKELnB1htUCyVq+DU5Ag96Ny720XP8IZAZQCaurqmbwHtzPYbdpLHqC+m/Ukgqx+39bkHR4lPYjvdzcPwxHRRvMakZeHDMOqVt5J9fDGzor8drCyd3bkl8dlZPUtcfzrZBiCTcdSvC3rH5W/bZdbul6/515R2RfP/paEZQ
+    println!("{:?}", part1(&map, 65));
+    println!("{:?}", part1(&map, 65+131));
+    println!("{:?}", part1(&map, 65+131*2));
+    // then wolfram alpha
+    // quadratic fit {{65, 3848}, {196, 34310}, {327, 95144}}
+    // then (15186/17161)*(26501365^2) + (26976/17161)*26501365 + (121238/17161)
 }
