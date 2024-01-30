@@ -1,7 +1,7 @@
 #![feature(btree_cursors)]
 
 use std::{
-    collections::{BTreeMap, HashMap},
+    collections::{BTreeMap, HashMap, HashSet},
     fs,
     ops::Bound,
     thread::current,
@@ -24,7 +24,7 @@ struct Graph {
     supports: HashMap<u64, Vec<u64>>,
     bricks_by_id: HashMap<u64, Brick>,
     bricks_by_z0: BTreeMap<i32, Vec<Brick>>,
-    bricks_by_z1: HashMap<i32, Vec<Brick>>
+    bricks_by_z1: HashMap<i32, Vec<Brick>>,
 }
 
 fn parse(lines: &Vec<&str>) -> Vec<Brick> {
@@ -144,7 +144,7 @@ fn fall_and_build_graph(bricks: &Vec<Brick>) -> Graph {
         supports,
         bricks_by_id,
         bricks_by_z0,
-        bricks_by_z1
+        bricks_by_z1,
     }
 }
 
@@ -193,14 +193,49 @@ fn is_intersection(bricks_at_z: &Vec<Brick>, brick: &Brick) -> bool {
     false
 }
 
+fn part2(bricks: &Vec<Brick>) -> u64 {
+    let g = fall_and_build_graph(&bricks);
+    // println!("supports = {:?}", g.supports);
+    // println!("supported_by = {:?}", g.supported_by);
+    let mut res = Vec::new();
+    for id in g.bricks_by_id.keys() {
+        let mut all_fallen = HashSet::new();
+        all_fallen.insert(id);
+        let mut cur_fallen = HashSet::new();
+        cur_fallen.insert(id);
+        while !cur_fallen.is_empty() {
+            let mut next_fallen = HashSet::new();
+            for cf in &cur_fallen {
+                let id_supports_opt = g.supports.get(cf);
+                if let Some(id_supports) = id_supports_opt {
+                    for id2 in id_supports {
+                        let id_supported_by = g.supported_by.get(id2).unwrap();
+                        let mut id_supported_by_minus_fallen = id_supported_by.clone();
+                        id_supported_by_minus_fallen.retain(|x| !all_fallen.contains(&x));
+                        if id_supported_by_minus_fallen.is_empty() {
+                            next_fallen.insert(id2);
+                        }
+                    }
+                }
+            }
+            cur_fallen.clear();
+            cur_fallen.extend(next_fallen.clone());
+            all_fallen.extend(next_fallen.clone());
+        }
+        res.push(all_fallen.len() - 1);
+    }
+    println!("{:?}", res);
+    res.iter().sum::<usize>() as u64
+}
+
 fn main() {
     let content = fs::read_to_string("inputs/day22.txt").unwrap();
     let lines = content.lines().collect::<Vec<_>>();
     let bricks = parse(&lines);
 
     // part 1
-    println!("{:?}", part1(&bricks));
+    // println!("{:?}", part1(&bricks));
 
     // part 2
-    // println!("{:?}", part2(&bricks));
+    println!("{:?}", part2(&bricks));
 }
