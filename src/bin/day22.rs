@@ -56,9 +56,7 @@ fn part1(bricks: &Vec<Brick>) -> u64 {
     let mut moved_bricks = Vec::new();
     for i in 0..bricks_sorted_by_z0.len() {
         let brick = bricks_sorted_by_z0[i];
-        // println!("---> Trying brick {:?}", brick);
         if brick.z0 == 1 {
-            // println!("z0 is 1, can't move further down");
             moved_bricks.push(brick);
             continue;
         }
@@ -66,14 +64,11 @@ fn part1(bricks: &Vec<Brick>) -> u64 {
         loop {
             let cursor = bricks_by_z.upper_bound(Bound::Excluded(&best_z));
             if let Some((z, bricks_at_z)) = cursor.peek_prev() {
-                // println!("{:?}", z);
                 if is_intersection(&bricks_at_z, &brick) {
                     best_z = (z + 1).min(best_z);
-                    // println!("setting best_z to {best_z}");
                     break;
                 } else {
                     best_z = *z;
-                    // println!("setting best_z to {z}");
                 }
             } else {
                 // nothing below so can just move to 1
@@ -81,7 +76,6 @@ fn part1(bricks: &Vec<Brick>) -> u64 {
                 break;
             }
         }
-        // println!("Can move from z0={} to z={}", brick.z0, best_z);
         if (brick.z0 != best_z) {
             // need to update the btreemap
             // delete first
@@ -104,14 +98,10 @@ fn part1(bricks: &Vec<Brick>) -> u64 {
                     .or_insert(Vec::new())
                     .push(updated_brick);
             }
-            // println!("new bricks_by_z={:?}", bricks_by_z);
             moved_bricks.push(updated_brick);
         } else {
             moved_bricks.push(brick);
         }
-    }
-    for mb in &moved_bricks {
-        println!("*** {:?}", mb);
     }
     // build the graph
     let mut supported_by: HashMap<u64, Vec<u64>> = HashMap::new();
@@ -140,8 +130,6 @@ fn part1(bricks: &Vec<Brick>) -> u64 {
             }
         }
     }
-    // println!("supports: {:?}", supports);
-    // println!("supported_by: {:?}", supported_by);
     let mut res = 0;
     for id in bricks_by_id.keys() {
         let id_supports_opt = supports.get(id);
