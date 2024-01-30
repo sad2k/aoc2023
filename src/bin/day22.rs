@@ -18,6 +18,15 @@ struct Brick {
     z1: i32,
 }
 
+#[derive(Debug)]
+struct Graph {
+    supported_by: HashMap<u64, Vec<u64>>,
+    supports: HashMap<u64, Vec<u64>>,
+    bricks_by_id: HashMap<u64, Brick>,
+    bricks_by_z0: BTreeMap<i32, Vec<Brick>>,
+    bricks_by_z1: HashMap<i32, Vec<Brick>>
+}
+
 fn parse(lines: &Vec<&str>) -> Vec<Brick> {
     let mut res = Vec::new();
     let mut id = 0;
@@ -44,7 +53,7 @@ fn parse(lines: &Vec<&str>) -> Vec<Brick> {
     res
 }
 
-fn part1(bricks: &Vec<Brick>) -> u64 {
+fn fall_and_build_graph(bricks: &Vec<Brick>) -> Graph {
     let mut bricks_by_z: BTreeMap<i32, Vec<Brick>> = BTreeMap::new();
     for brick in bricks {
         for z in brick.z0..=brick.z1 {
@@ -130,13 +139,24 @@ fn part1(bricks: &Vec<Brick>) -> u64 {
             }
         }
     }
+    Graph {
+        supported_by,
+        supports,
+        bricks_by_id,
+        bricks_by_z0,
+        bricks_by_z1
+    }
+}
+
+fn part1(bricks: &Vec<Brick>) -> u64 {
+    let g = fall_and_build_graph(&bricks);
     let mut res = 0;
-    for id in bricks_by_id.keys() {
-        let id_supports_opt = supports.get(id);
+    for id in g.bricks_by_id.keys() {
+        let id_supports_opt = g.supports.get(id);
         if let Some(id_supports) = id_supports_opt {
             let mut disintegrate = true;
             for id2 in id_supports {
-                let id_supported_by = supported_by.get(id2).unwrap();
+                let id_supported_by = g.supported_by.get(id2).unwrap();
                 if id_supported_by.len() == 1 {
                     disintegrate = false;
                     break;
@@ -180,4 +200,7 @@ fn main() {
 
     // part 1
     println!("{:?}", part1(&bricks));
+
+    // part 2
+    // println!("{:?}", part2(&bricks));
 }
