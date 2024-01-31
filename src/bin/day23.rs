@@ -10,7 +10,8 @@ struct Graph {
 
 #[derive(Debug)]
 struct Path {
-    previous: HashSet<(i32, i32, i32)>,
+    previous_nodes: HashSet<(i32, i32)>,
+    previous_costs: Vec<i32>,
     last: (i32, i32, i32),
 }
 
@@ -60,7 +61,8 @@ fn parse_graph(lines: &Vec<Vec<char>>, use_slopes: bool) -> Graph {
 fn solve(graph: &Graph, dest: (i32, i32)) -> i32 {
     let mut q = VecDeque::new();
     q.push_front(Path {
-        previous: HashSet::new(),
+        previous_nodes: HashSet::new(),
+        previous_costs: Vec::new(),
         last: (0, 1, 0),
     });
     let mut cnt = 0;
@@ -68,17 +70,20 @@ fn solve(graph: &Graph, dest: (i32, i32)) -> i32 {
     while !q.is_empty() {
         let p = q.pop_front().unwrap();
         if p.last.0 == dest.0 && p.last.1 == dest.1 {
-            let path_len = p.previous.iter().map(|x| x.2).sum::<i32>() + p.last.2;
+            let path_len = p.previous_costs.iter().sum::<i32>() + p.last.2;
             res = res.max(path_len);
             cnt += 1;
-            // println!("{}: max so far {}", cnt, res)
+            println!("{}: max so far {}", cnt, res)
         } else {
             for e in &graph.nodes[&(p.last.0, p.last.1)] {
-                if !p.previous.contains(e) {
-                    let mut new_prev = p.previous.clone();
-                    new_prev.insert(p.last);
+                if !p.previous_nodes.contains(&(e.0, e.1)) {
+                    let mut new_prev_nodes = p.previous_nodes.clone();
+                    let mut new_prev_costs = p.previous_costs.clone();
+                    new_prev_nodes.insert((p.last.0, p.last.1));
+                    new_prev_costs.push(p.last.2);
                     q.push_front(Path {
-                        previous: new_prev,
+                        previous_nodes: new_prev_nodes,
+                        previous_costs: new_prev_costs,
                         last: *e,
                     });
                 }
@@ -89,13 +94,26 @@ fn solve(graph: &Graph, dest: (i32, i32)) -> i32 {
 }
 
 fn contract(graph: &Graph) -> Graph {
-    // let mut new_node_edges = HashMap::new();
-    // for (n, edges) in &graph.node_edges {
-
-    // } 
-    Graph {
-        nodes: graph.nodes.clone()
+    let mut new_nodes = graph.nodes.clone();
+    let mut to_contract = VecDeque::new();
+    for (n, edges) in &graph.nodes {
+        if edges.len() == 2 {
+            to_contract.push_back(n);
+        }
     }
+    while !to_contract.is_empty() {
+        let n = to_contract.pop_front().unwrap();
+        let edges = new_nodes.remove(n).unwrap();
+        let left = edges[0];
+        let right = edges[1];
+        let mut left_edges = new_nodes.get_mut(&(left.0, left.1)).unwrap();
+        left_edges.retain(|x| x.0 != n.0 || x.1 != n.1);
+        left_edges.push((right.0, right.1, left.2 + right.2));
+        let mut right_edges = new_nodes.get_mut(&(right.0, right.1)).unwrap();
+        right_edges.retain(|x| x.0 != n.0 || x.1 != n.1);
+        right_edges.push((left.0, left.1, left.2 + right.2));
+    }
+    Graph { nodes: new_nodes }
 }
 
 fn main() {
@@ -112,7 +130,7 @@ fn main() {
     // part 2
     let graph2 = parse_graph(&lines, false);
     let graph2 = contract(&graph2);
-    println!("{:?}", graph); 
+    println!("{:?}", graph2);
     println!(
         "{}",
         solve(
