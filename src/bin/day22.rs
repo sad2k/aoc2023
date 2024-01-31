@@ -195,8 +195,6 @@ fn is_intersection(bricks_at_z: &Vec<Brick>, brick: &Brick) -> bool {
 
 fn part2(bricks: &Vec<Brick>) -> u64 {
     let g = fall_and_build_graph(&bricks);
-    // println!("supports = {:?}", g.supports);
-    // println!("supported_by = {:?}", g.supported_by);
     let mut res = Vec::new();
     for id in g.bricks_by_id.keys() {
         let mut all_fallen = HashSet::new();
@@ -224,7 +222,6 @@ fn part2(bricks: &Vec<Brick>) -> u64 {
         }
         res.push(all_fallen.len() - 1);
     }
-    println!("{:?}", res);
     res.iter().sum::<usize>() as u64
 }
 
