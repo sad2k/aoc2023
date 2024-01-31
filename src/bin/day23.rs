@@ -14,12 +14,18 @@ struct Path {
     last: (i32, i32),
 }
 
-fn parse_graph(lines: &Vec<Vec<char>>) -> Graph {
+fn parse_graph(lines: &Vec<Vec<char>>, use_slopes: bool) -> Graph {
     let mut node_edges: HashMap<(i32, i32), Vec<(i32, i32)>> = HashMap::new();
     for row in 0..lines.len() {
         let line = &lines[row];
         for col in 0..line.len() {
-            let edges = match line[col] {
+            let mut ch = line[col];
+            if !use_slopes {
+                if ch != '#' {
+                    ch = '.';
+                }
+            }
+            let edges = match ch {
                 '.' => {
                     let mut v = Vec::new();
                     if row > 0 && lines[row - 1][col] != '#' {
@@ -42,6 +48,7 @@ fn parse_graph(lines: &Vec<Vec<char>>) -> Graph {
                 '^' => Some(vec![((row - 1) as i32, col as i32)]),
                 _ => None,
             };
+
             if edges.is_some() {
                 node_edges.insert((row as i32, col as i32), edges.unwrap());
             }
@@ -50,26 +57,28 @@ fn parse_graph(lines: &Vec<Vec<char>>) -> Graph {
     Graph { node_edges }
 }
 
-fn part1(graph: &Graph, dest: (i32, i32)) -> i32 {
+fn solve(graph: &Graph, dest: (i32, i32)) -> i32 {
     let mut q = VecDeque::new();
     q.push_front(Path {
         previous: HashSet::new(),
         last: (0, 1),
     });
+    let mut cnt = 0;
     let mut res = 0;
     while !q.is_empty() {
         let p = q.pop_front().unwrap();
         if p.last == dest {
-            println!("Got to dest with {:?}", p.previous.len());
             res = res.max(p.previous.len());
+            cnt += 1;
+            println!("{}: max so far {}", cnt, res)
         } else {
-            let mut new_prev = p.previous.clone();
-            new_prev.insert(p.last.clone());
             for e in &graph.node_edges[&p.last] {
                 if !p.previous.contains(e) {
+                    let mut new_prev = p.previous.clone();
+                    new_prev.insert(p.last);
                     q.push_front(Path {
-                        previous: new_prev.clone(),
-                        last: e.clone()
+                        previous: new_prev,
+                        last: *e,
                     });
                 }
             }
@@ -84,8 +93,18 @@ fn main() {
         .lines()
         .map(|x| x.chars().collect::<Vec<_>>())
         .collect::<Vec<_>>();
-    let graph = parse_graph(&lines);
+    let graph = parse_graph(&lines, true);
 
     // part 1
-    println!("{}", part1(&graph, ((lines.len()-1) as i32, (lines[0].len()-2) as i32)));
+    // println!("{}", part1(&graph, ((lines.len()-1) as i32, (lines[0].len()-2) as i32)));
+
+    // part 2
+    let graph2 = parse_graph(&lines, false);
+    println!(
+        "{}",
+        solve(
+            &graph2,
+            ((lines.len() - 1) as i32, (lines[0].len() - 2) as i32)
+        )
+    );
 }
