@@ -1,6 +1,5 @@
 use std::{
-    collections::{HashMap, HashSet, VecDeque},
-    fs,
+    collections::{HashMap, HashSet, VecDeque}, fs, time::Instant
 };
 
 #[derive(Debug)]
@@ -73,7 +72,7 @@ fn solve(graph: &Graph, dest: (i32, i32)) -> i32 {
             let path_len = p.previous_costs.iter().sum::<i32>() + p.last.2;
             res = res.max(path_len);
             cnt += 1;
-            println!("{}: max so far {}", cnt, res)
+            // println!("{}: max so far {}", cnt, res)
         } else {
             for e in &graph.nodes[&(p.last.0, p.last.1)] {
                 if !p.previous_nodes.contains(&(e.0, e.1)) {
@@ -130,7 +129,7 @@ fn main() {
     // part 2
     let graph2 = parse_graph(&lines, false);
     let graph2 = contract(&graph2);
-    println!("{:?}", graph2);
+    let start = Instant::now();
     println!(
         "{}",
         solve(
@@ -138,4 +137,6 @@ fn main() {
             ((lines.len() - 1) as i32, (lines[0].len() - 2) as i32)
         )
     );
+    let duration = start.elapsed();
+    println!("Finished part 2 in {:?}", duration);
 }
