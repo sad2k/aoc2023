@@ -75,4 +75,6 @@ fn main() {
         "{}",
         part1(&hailstones, 200000000000000.0, 400000000000000.0, 1e9)
     );
+
+    // part 2 solved in numpy
 }
